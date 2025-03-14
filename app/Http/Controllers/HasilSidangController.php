@@ -10,8 +10,9 @@ class HasilSidangController extends Controller
 {
     public function index()
     {
-        $hasilSidang = HasilSidang::with('sidang')->get();
-        return view('admin.hasil_sidang.index', compact('hasilSidang'));
+        $response = Http::get('http://localhost:8080/hasil_sidang');
+        $dosen = $response->json();
+        return view('dashboard', compact('dosen'));
     }
 
     public function create()

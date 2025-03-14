@@ -10,6 +10,13 @@ use Illuminate\Support\Facades\Auth;
 
 class DosenController extends Controller
 {
+    public function index()
+    {
+        $response = Http::get('http://localhost:8080/dosen');
+        $dosen = $response->json();
+        return view('dashboard', compact('dosen'));
+    }
+
     public function notifikasi()
     {
         $notifikasi = Notifikasi::where('NIDN', Auth::user()->NIDN)->get();
