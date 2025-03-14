@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Notifikasi;
+use App\Models\Sidang;
+use App\Models\HasilSidang;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class DosenController extends Controller
+{
+    public function notifikasi()
+    {
+        $notifikasi = Notifikasi::where('NIDN', Auth::user()->NIDN)->get();
+        return view('dosen.notifikasi', compact('notifikasi'));
+    }
+
+    public function jadwal()
+    {
+        $jadwal = Sidang::where('NIDN', Auth::user()->NIDN)->get();
+        return view('dosen.jadwal', compact('jadwal'));
+    }
+
+    public function nilai($id_sidang)
+    {
+        $sidang = Sidang::findOrFail($id_sidang);
+        return view('dosen.nilai', compact('sidang'));
+    }
+
+    public function simpanNilai(Request $request, $id_sidang)
+    {
+        $request->validate([
+            'nilai' => 'required|numeric|min:0|max:100',
+            'catatan' => 'nullable|string',
+        ]);
+
+        HasilSidang::updateOrCreate(
+            ['id_sidang' => $id_sidang],
+            ['nilai' => $request->nilai, 'catatan' => $request->catatan]
+        );
+
+        return redirect()->route('dosen.jadwal')->with('success', 'Nilai berhasil disimpan.');
+    }
+}
